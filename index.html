@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B.A.D SCHOOL · Complete Management System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ============================================================
+       CSS VARIABLES
+    ============================================================ */
+    :root {
+      --bg-body: #f0f5fb;
+      --bg-card: #ffffff;
+      --bg-nav: #0a1e33;
+      --text-primary: #0a1e33;
+      --text-secondary: #2a4058;
+      --border-color: #dce6f0;
+      --shadow: 0 8px 24px rgba(0,20,30,0.06);
+      --input-bg: #ffffff;
+      --input-border: #c5d5e8;
+      --primary: #1a6bb0;
+      --primary-hover: #0f4f8a;
+      --success: #1f9a6e;
+      --danger: #c44a4a;
+      --warning: #c49a2a;
+      --footer-bg: #0a1e33;
+      --footer-text: #bcd2e8;
+      --toggle-bg: #e5eff9;
+      --badge-bg: #eef5fa;
+      --radius: 18px;
+      --transition: 0.25s ease;
+      --school-color: #c49a2a;
+      --teacher-color: #6f42c1;
+      --db-color: #17a2b8;
+      --final-color: #dc3545;
+      --sms-color: #25d366;
+      --finance-color: #28a745;
+      --money-color: #2ecc71;
+      --expense-color: #e74c3c;
+      --notification-bg: #fff3cd;
+      --notification-border: #ffc107;
+      --modal-overlay: rgba(0,0,0,0.5);
+      --pending-bg: #fff3cd;
+      --approved-bg: #d4edda;
+      --rejected-bg: #f8d7da;
+    }
+    .dark-mode {
+      --bg-body: #111d2b;
+      --bg-card: #1a2b3d;
+      --bg-nav: #0a1520;
+      --text-primary: #e8f0fa;
+      --text-secondary: #b0cae5;
+      --border-color: #2a4058;
+      --shadow: 0 8px 24px rgba(0,0,0,0.35);
+      --input-bg: #1f3348;
+      --input-border: #3a5777;
+      --primary: #4a8fd4;
+      --primary-hover: #6aa8e0;
+      --footer-bg: #0a1520;
+      --footer-text: #8aadcc;
+      --toggle-bg: #2a4058;
+      --badge-bg: #253b52;
+      --notification-bg: #2a2a1a;
+      --notification-border: #c49a2a;
+      --modal-overlay: rgba(0,0,0,0.7);
+      --pending-bg: #3a3a1a;
+      --approved-bg: #1a3a2a;
+      --rejected-bg: #3a1a1a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Roboto,system-ui,sans-serif; transition:background var(--transition), color var(--transition), border-color var(--transition); }
+    body { background:var(--bg-body); color:var(--text-primary); display:flex; flex-direction:column; min-height:100vh; }
+    .container { max-width:1360px; margin:0 auto; padding:0 1.5rem; }
+
+    /* ============================================================
+       LOGIN PAGE
+    ============================================================ */
+    .login-page {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #0a1e33 0%, #1a3a5a 50%, #0a1e33 100%);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; overflow-y: auto;
+    }
+    .login-page.hidden { display: none; }
+    .login-bg-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
+    .floating-shape { position: absolute; border-radius: 50%; animation: float 15s infinite ease-in-out; }
+    .shape-1 { width: 300px; height: 300px; top: -100px; left: -100px; background: radial-gradient(circle, rgba(196, 154, 42, 0.3), transparent); }
+    .shape-2 { width: 200px; height: 200px; bottom: -50px; right: -50px; background: radial-gradient(circle, rgba(26, 107, 176, 0.3), transparent); animation-delay: 3s; }
+    .shape-3 { width: 150px; height: 150px; top: 50%; left: 10%; background: radial-gradient(circle, rgba(196, 154, 42, 0.2), transparent); animation-delay: 6s; }
+    .shape-4 { width: 250px; height: 250px; bottom: 10%; right: 5%; background: radial-gradient(circle, rgba(31, 154, 110, 0.2), transparent); animation-delay: 9s; }
+    .shape-5 { width: 100px; height: 100px; top: 20%; right: 20%; background: radial-gradient(circle, rgba(111, 66, 193, 0.25), transparent); animation-delay: 12s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -40px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.9); }
+    }
+    .login-top-actions { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10; }
+    .action-btn {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; padding: 0.5rem 0.8rem; border-radius: 30px;
+      cursor: pointer; font-size: 0.85rem;
+      display: flex; align-items: center; gap: 0.3rem;
+      transition: all 0.2s; backdrop-filter: blur(10px);
+    }
+    .action-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .login-container {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1fr 1fr;
+      max-width: 1150px; width: 100%;
+      background: var(--bg-card); border-radius: 30px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-left {
+      background: linear-gradient(135deg, #0a1e33 0%, #1a3a5a 100%);
+      color: #fff; padding: 3rem 2.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .login-left::before {
+      content: ''; position: absolute; top: -50%; right: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(196, 154, 42, 0.15) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .login-brand { text-align: center; position: relative; z-index: 1; }
+    .login-logo {
+      width: 110px; height: 110px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 4px solid var(--school-color);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; color: var(--school-color);
+      margin-bottom: 1rem; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(196, 154, 42, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .login-logo img { width: 100%; height: 100%; object-fit: cover; }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 10px 30px rgba(196, 154, 42, 0.3); transform: scale(1); }
+      50% { box-shadow: 0 15px 40px rgba(196, 154, 42, 0.6); transform: scale(1.05); }
+    }
+    .login-school-name { font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .login-motto { font-size: 0.9rem; opacity: 0.8; font-style: italic; margin-bottom: 1rem; }
+    .login-badges { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.8rem; }
+    .badge-mini {
+      background: rgba(255,255,255,0.15); padding: 0.3rem 0.8rem;
+      border-radius: 20px; font-size: 0.7rem;
+      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .login-features { position: relative; z-index: 1; margin: 2rem 0; }
+    .login-features h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--school-color); }
+    .feature-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .feature-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.5rem; border-radius: 10px; transition: all 0.2s; }
+    .feature-item:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
+    .feature-icon {
+      width: 40px; height: 40px; background: rgba(196, 154, 42, 0.2);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      color: var(--school-color); font-size: 1.1rem; flex-shrink: 0;
+    }
+    .feature-title { font-weight: 600; font-size: 0.85rem; }
+    .feature-desc { font-size: 0.7rem; opacity: 0.7; }
+    .login-footer-info { position: relative; z-index: 1; font-size: 0.8rem; opacity: 0.85; display: flex; flex-direction: column; gap: 0.5rem; }
+    .contact-item { display: flex; align-items: center; gap: 0.5rem; }
+    .contact-item i { color: var(--school-color); width: 20px; }
+    .login-right { padding: 2.5rem 2.5rem; display: flex; flex-direction: column; justify-content: center; max-height: 90vh; overflow-y: auto; }
+    .login-form-header { text-align: center; margin-bottom: 1rem; }
+    .login-greeting { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+    .greeting-icon { font-size: 1.5rem; animation: wave 1.5s ease-in-out infinite; }
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(20deg); }
+      75% { transform: rotate(-20deg); }
+    }
+    .login-form-header h2 { font-size: 1.5rem; color: var(--text-primary); }
+    .login-form-header p { font-size: 0.85rem; color: var(--text-secondary); }
+    .login-tabs { display: flex; gap: 0.3rem; background: var(--bg-body); padding: 0.3rem; border-radius: 12px; margin-bottom: 1rem; }
+    .login-tab {
+      flex: 1; padding: 0.5rem; border: none; background: transparent;
+      border-radius: 10px; cursor: pointer; font-size: 0.75rem;
+      font-weight: 600; color: var(--text-secondary);
+      display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+      transition: all 0.2s;
+    }
+    .login-tab.active { background: var(--bg-card); color: var(--school-color); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .login-tab-content { display: none; }
+    .login-tab-content.active { display: block; }
+    .role-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; margin-bottom: 0.5rem; }
+    .role-option {
+      padding: 0.6rem 0.3rem; border: 2px solid var(--border-color);
+      border-radius: 10px; text-align: center; cursor: pointer;
+      transition: all 0.2s; background: var(--bg-body);
+    }
+    .role-option:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .role-option.active {
+      border-color: var(--school-color);
+      background: rgba(196, 154, 42, 0.1);
+      box-shadow: 0 4px 15px rgba(196, 154, 42, 0.3);
+    }
+    .role-option i { font-size: 1.2rem; color: var(--primary); display: block; margin-bottom: 0.2rem; }
+    .role-option.active i { color: var(--school-color); }
+    .role-option span { font-size: 0.65rem; font-weight: 600; color: var(--text-secondary); }
+    .role-option.active span { color: var(--school-color); }
+    .input-wrapper { position: relative; }
+    .input-wrapper .input-icon {
+      position: absolute; left: 15px; top: 50%;
+      transform: translateY(-50%); color: var(--text-secondary);
+      font-size: 0.9rem; pointer-events: none;
+    }
+    .input-wrapper input {
+      width: 100%; padding: 0.8rem 2.8rem 0.8rem 2.8rem;
+      border: 2px solid var(--input-border); border-radius: 12px;
+      background: var(--input-bg); color: var(--text-primary);
+      font-size: 0.9rem; transition: all 0.2s;
+    }
+    .input-wrapper input:focus {
+      outline: none; border-color: var(--school-color);
+      box-shadow: 0 0 0 3px rgba(196, 154, 42, 0.15);
+    }
+    .input-action {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%); background: none; border: none;
+      color: var(--text-secondary); cursor: pointer;
+      font-size: 0.85rem; padding: 0.3rem;
+    }
+    .input-action:hover { color: var(--school-color); }
+    .password-strength-indicator { margin-top: 0.3rem; height: 4px; background: var(--bg-body); border-radius: 4px; overflow: hidden; }
+    .strength-bar { height: 100%; width: 0; transition: all 0.3s; border-radius: 4px; }
+    .strength-bar.weak { width: 33%; background: #dc3545; }
+    .strength-bar.medium { width: 66%; background: #ffc107; }
+    .strength-bar.strong { width: 100%; background: #28a745; }
+    .login-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+    .checkbox-wrapper { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-secondary); }
+    .checkbox-wrapper input { display: none; }
+    .checkmark {
+      width: 18px; height: 18px; border: 2px solid var(--border-color);
+      border-radius: 4px; display: inline-block; position: relative; transition: all 0.2s;
+    }
+    .checkbox-wrapper input:checked + .checkmark { background: var(--school-color); border-color: var(--school-color); }
+    .checkbox-wrapper input:checked + .checkmark::after {
+      content: '✓'; position: absolute; color: #fff;
+      font-size: 0.7rem; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .forgot-link { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .forgot-link:hover { color: var(--school-color); text-decoration: underline; }
+    .btn-login {
+      width: 100%; padding: 0.9rem;
+      background: linear-gradient(135deg, var(--school-color), #e6b800);
+      color: #fff; border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: all 0.3s;
+      box-shadow: 0 6px 20px rgba(196, 154, 42, 0.4);
+    }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(196, 154, 42, 0.6); }
+    .btn-login.loading { pointer-events: none; opacity: 0.8; }
+    .login-divider { text-align: center; margin: 1rem 0; position: relative; }
+    .login-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border-color); }
+    .login-divider span { background: var(--bg-card); padding: 0 1rem; position: relative; font-size: 0.75rem; color: var(--text-secondary); }
+    .social-login { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+    .social-btn {
+      padding: 0.6rem; border: 2px solid var(--border-color);
+      border-radius: 10px; background: var(--bg-card);
+      color: var(--text-primary); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .social-btn:hover { border-color: var(--school-color); transform: translateY(-2px); }
+    .demo-credentials {
+      background: rgba(196, 154, 42, 0.08);
+      border: 1px dashed var(--school-color);
+      border-radius: 12px; padding: 0.8rem; margin-bottom: 0.5rem;
+    }
+    .demo-header { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.3rem; }
+    .demo-header i { color: var(--school-color); }
+    .demo-accounts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.4rem; }
+    .demo-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem; background: var(--bg-card);
+      border: 1px solid var(--border-color); border-radius: 8px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .demo-btn:hover { background: var(--school-color); color: #fff; border-color: var(--school-color); transform: translateY(-2px); }
+    .demo-btn i { font-size: 1.2rem; flex-shrink: 0; }
+    .demo-btn > div { display: flex; flex-direction: column; text-align: left; }
+    .demo-role { font-size: 0.7rem; font-weight: 700; }
+    .demo-cred { font-size: 0.6rem; opacity: 0.7; font-family: monospace; }
+    .login-page-footer { text-align: center; font-size: 0.7rem; color: var(--text-secondary); padding-top: 0.8rem; border-top: 1px solid var(--border-color); }
+    .login-page-footer p { margin: 0.2rem 0; }
+
+    /* ============================================================
+       FORCE PASSWORD CHANGE MODAL
+    ============================================================ */
+    .force-password-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(10px);
+      z-index: 10000; display: none;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .force-password-modal.open { display: flex; }
+    .force-password-box {
+      background: var(--bg-card); border-radius: 30px;
+      max-width: 500px; width: 100%;
+      padding: 2.5rem; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      border: 2px solid var(--school-color);
+    }
+    .force-password-header { text-align: center; margin-bottom: 1.5rem; }
+    .force-password-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--school-color), #e6b800);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: #fff; margin-bottom: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    .force-password-header h2 { color: var(--text-primary); margin-bottom: 0.3rem; }
+    .force-password-header p { color: var(--text-secondary); font-size: 0.9rem; }
+    .force-password-info {
+      background: rgba(196, 154, 42, 0.1);
+      border-left: 4px solid var(--school-color);
+      padding: 0.8rem; border-radius: 8px;
+      font-size: 0.85rem; margin-bottom: 1rem;
+    }
+
+    /* ============================================================
+       SCHOOL HEADER & NAVIGATION
+    ============================================================ */
+    .school-header {
+      background: linear-gradient(135deg, #0a1e33 0%, #1a3a5a 100%);
+      color: #fff; padding: 0.8rem 0;
+      border-bottom: 4px solid var(--school-color);
+    }
+    .school-header .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+    .school-brand { display: flex; align-items: center; gap: 1rem; }
+    .school-logo-container {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 3px solid var(--school-color);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
+    }
+    .school-logo-container:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(196, 154, 42, 0.5); }
+    .school-logo-container img { width: 100%; height: 100%; object-fit: cover; }
+    .school-logo-container .logo-placeholder { font-size: 2rem; color: var(--school-color); }
+    .school-logo-container .logo-upload-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.6); color: #fff; font-size: 0.55rem;
+      padding: 0.15rem; text-align: center; opacity: 0; transition: 0.3s;
+    }
+    .school-logo-container:hover .logo-upload-overlay { opacity: 1; }
+    .school-brand .school-name-display { font-size: 1.5rem; font-weight: 700; }
+    .school-brand .school-name-display span { color: var(--school-color); }
+    .school-brand .school-motto-display { font-size: 0.7rem; opacity: 0.8; font-style: italic; }
+    .school-version-badge { font-size: 0.6rem; opacity: 0.6; background: rgba(255,255,255,0.1); padding: 0.1rem 0.6rem; border-radius: 30px; margin-left: 0.5rem; }
+    .school-contact { font-size: 0.8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .school-contact i { color: var(--school-color); margin-right: 4px; }
+    .user-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.1); padding: 0.3rem 0.8rem;
+      border-radius: 30px; border: 2px solid var(--school-color);
+    }
+    .user-avatar-badge {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--school-color);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.8rem;
+    }
+    .user-info-badge { display: flex; flex-direction: column; }
+    .user-name-badge { font-size: 0.75rem; font-weight: 600; }
+    .user-role-badge { font-size: 0.6rem; opacity: 0.8; text-transform: uppercase; }
+    .navbar { background:var(--bg-nav); color:#fff; padding:0.4rem 0; position:sticky; top:0; z-index:100; }
+    .navbar .container { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.4rem; }
+    .logo { font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .logo i { color:#6fc9ff; }
+    .nav-links { display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; }
+    .nav-links a { color:#e7f0fa; text-decoration:none; font-size:0.75rem; padding:0.25rem 0.6rem; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:4px; }
+    .nav-links a:hover, .nav-links a.active { background:rgba(255,255,255,0.1); color:#fff; }
+    .nav-links a.hidden-by-role { display: none !important; }
+    .nav-actions { display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; }
+    .notification-bell { position: relative; cursor: pointer; font-size: 1.3rem; color: #fff; margin-right: 0.5rem; }
+    .notification-bell .badge-count { position: absolute; top: -8px; right: -10px; background: var(--danger); color: #fff; border-radius: 50%; padding: 0.1rem 0.5rem; font-size: 0.65rem; font-weight: 700; min-width: 20px; text-align: center; }
+    .notification-dropdown { position: absolute; top: 40px; right: 0; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 380px; max-height: 450px; overflow-y: auto; display: none; z-index: 1000; padding: 0.5rem 0; }
+    .notification-dropdown.open { display: block; }
+    .notification-item { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.8rem; }
+    .notification-item .noti-icon { color: var(--school-color); font-size: 1.1rem; }
+    .notification-item .noti-content { flex: 1; }
+    .notification-item .noti-title { font-weight: 600; font-size: 0.85rem; }
+    .notification-item .noti-time { font-size: 0.7rem; color: var(--text-secondary); }
+    .notification-item.unread { background: var(--notification-bg); border-left: 3px solid var(--notification-border); }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn { display:inline-block; padding:0.3rem 1.1rem; border-radius:40px; font-weight:600; font-size:0.75rem; border:1px solid transparent; cursor:pointer; transition:0.2s; background:transparent; color:#fff; }
+    .btn-primary { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .btn-primary:hover { background:var(--primary-hover); }
+    .btn-success { background:var(--success); border-color:var(--success); color:#fff; }
+    .btn-danger { background:var(--danger); border-color:var(--danger); color:#fff; }
+    .btn-warning { background:var(--warning); border-color:var(--warning); color:#fff; }
+    .btn-sm { padding:0.1rem 0.6rem; font-size:0.65rem; border-radius:30px; }
+    .btn-info { background:var(--db-color); border-color:var(--db-color); color:#fff; }
+    .btn-purple { background:var(--teacher-color); border-color:var(--teacher-color); color:#fff; }
+    .btn-final { background:var(--final-color); border-color:var(--final-color); color:#fff; }
+    .btn-sms { background:var(--sms-color); border-color:var(--sms-color); color:#fff; }
+    .btn-photo { background:#8e44ad; border-color:#8e44ad; color:#fff; }
+    .btn-finance { background:var(--finance-color); border-color:var(--finance-color); color:#fff; }
+    .btn-money { background:var(--money-color); border-color:var(--money-color); color:#fff; }
+    .btn-expense { background:var(--expense-color); border-color:var(--expense-color); color:#fff; }
+    .theme-toggle { background:var(--toggle-bg); border:none; border-radius:30px; padding:0.2rem 0.8rem; font-size:0.75rem; cursor:pointer; color:var(--text-primary); font-weight:600; display:flex; align-items:center; gap:4px; }
+    .hamburger { display:none; font-size:1.4rem; background:none; border:none; color:#fff; cursor:pointer; }
+
+    /* ============================================================
+       PAGES, CARDS, GRIDS
+    ============================================================ */
+    .page-section { display:none; padding:1rem 0; }
+    .page-section.active { display:block; }
+    .page-section.hidden-by-role { display: none !important; }
+    .section-title { font-size:1.5rem; font-weight:600; margin:0.2rem 0 1rem; border-left:6px solid var(--school-color); padding-left:1rem; }
+    .card { background:var(--bg-card); border-radius:var(--radius); padding:1.2rem 1.4rem; box-shadow:var(--shadow); border:1px solid var(--border-color); margin-bottom:1rem; }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.2rem; }
+    .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+    .stat-card { background:var(--bg-card); border-radius:16px; padding:0.8rem 1rem; border:1px solid var(--border-color); box-shadow:var(--shadow); text-align:center; }
+    .stat-card .number { font-size:1.6rem; font-weight:700; color:var(--primary); }
+    .stat-card .label { font-size:0.75rem; color:var(--text-secondary); }
+    .stat-card .icon { font-size:1.5rem; color:var(--school-color); margin-bottom:0.2rem; }
+    .finance-stat { background: linear-gradient(135deg, var(--finance-color), #1e8449); color: #fff; border-radius: 16px; padding: 1rem; }
+    .finance-stat.expense { background: linear-gradient(135deg, var(--expense-color), #c0392b); }
+    .finance-stat.money { background: linear-gradient(135deg, var(--money-color), #27ae60); }
+    .finance-stat.balance { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); }
+    .finance-stat .number { font-size: 1.8rem; font-weight: 700; }
+    .finance-stat .label { font-size: 0.75rem; opacity: 0.9; }
+    .form-group { margin-bottom:0.7rem; }
+    .form-group label { display:block; font-weight:600; font-size:0.8rem; margin-bottom:0.2rem; color:var(--text-secondary); }
+    .form-group input, .form-group select, .form-group textarea { width:100%; padding:0.5rem 0.9rem; border-radius:12px; border:1px solid var(--input-border); background:var(--input-bg); color:var(--text-primary); font-size:0.85rem; }
+    .form-group input:focus, .form-group select:focus { outline:2px solid var(--primary); border-color:transparent; }
+    .form-row { display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .form-row .form-group { flex:1; min-width:140px; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:0.4rem 0.6rem; text-align:left; border-bottom:1px solid var(--border-color); font-size:0.85rem; }
+    th { color:var(--text-secondary); font-weight:600; font-size:0.7rem; text-transform:uppercase; background:var(--bg-body); }
+    .badge { padding:0.12rem 0.7rem; border-radius:40px; font-size:0.65rem; font-weight:600; background:var(--badge-bg); color:var(--text-primary); }
+    .badge-done { background:#d5f0e3; color:#0f5e32; }
+    .badge-pending { background:#fef0d5; color:#9e6d0a; }
+    .badge-progress { background:#d7e7fa; color:#1f66a8; }
+    .badge-danger { background:#f8d5d5; color:#a13a3a; }
+    .badge-gold { background:var(--school-color); color:#fff; }
+    .badge-info { background:#d1ecf1; color:#0c5460; }
+    .badge-approved { background:var(--approved-bg); color:#155724; }
+    .badge-pending-approval { background:var(--pending-bg); color:#856404; }
+    .badge-rejected { background:var(--rejected-bg); color:#721c24; }
+    .badge-purple { background:var(--teacher-color); color:#fff; }
+    .badge-final { background:var(--final-color); color:#fff; }
+    .badge-sms { background:var(--sms-color); color:#fff; }
+    .badge-money { background:var(--money-color); color:#fff; }
+    .badge-expense { background:var(--expense-color); color:#fff; }
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--school-color), #e6b800);
+      color: #fff; padding: 1.5rem; border-radius: 18px;
+      margin-bottom: 1rem; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .welcome-banner h2 { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    .welcome-banner p { opacity: 0.95; font-size: 0.9rem; }
+    .welcome-banner .banner-icon { font-size: 4rem; opacity: 0.3; }
+    .quick-action-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      padding: 1rem 0.5rem; background: var(--bg-body);
+      border: 2px solid var(--border-color); border-radius: 12px;
+      cursor: pointer; transition: all 0.3s; color: var(--text-primary);
+    }
+    .quick-action-btn:hover { transform: translateY(-3px); border-color: var(--school-color); box-shadow: 0 8px 20px rgba(196, 154, 42, 0.2); }
+    .quick-action-btn i { font-size: 1.8rem; }
+    .quick-action-btn span { font-size: 0.75rem; font-weight: 600; text-align: center; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(6px); z-index: 1000; display: none; justify-content: center; align-items: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: var(--bg-card); border-radius: 24px; padding: 2rem; max-width: 600px; width: 92%; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(0,0,0,0.3); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.8rem; }
+    .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary); }
+    .toast {
+      position: fixed; bottom: 20px; right: 20px;
+      background: var(--bg-card); border-left: 6px solid var(--primary);
+      padding: 0.8rem 1.5rem; border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: none; z-index: 9999; max-width: 400px;
+      font-size: 0.9rem; align-items: center; gap: 12px;
+    }
+    .toast.show { display: flex; }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--warning); }
+    .toast .toast-close { background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 1.2rem; }
+    .footer { background: var(--footer-bg); color: var(--footer-text); padding: 1rem 0; margin-top: auto; border-top: 3px solid var(--school-color); }
+    .footer .container { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+    .footer-links a { color: var(--footer-text); text-decoration: none; font-size: 0.8rem; margin-right: 1rem; }
+    .whatsapp-link { background: #25d366; color: #fff; padding: 0.1rem 0.9rem; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.75rem; }
+    .profile-picture {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: var(--bg-card); border: 4px solid var(--school-color);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; color: var(--school-color);
+      margin: 0 auto 1rem; position: relative;
+      overflow: hidden; cursor: pointer;
+    }
+    .profile-picture img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-picture .upload-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.6); color: #fff; font-size: 0.65rem;
+      padding: 0.3rem; text-align: center; opacity: 0; transition: 0.3s;
+    }
+    .profile-picture:hover .upload-overlay { opacity: 1; }
+    .student-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--school-color); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1rem; overflow: hidden; flex-shrink: 0; }
+    .teacher-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teacher-color); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1rem; overflow: hidden; flex-shrink: 0; }
+    .report-btn {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 1rem; background: var(--bg-body);
+      border: 2px solid var(--border-color); border-radius: 12px;
+      cursor: pointer; transition: all 0.3s; text-align: left; color: var(--text-primary);
+    }
+    .report-btn:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .report-btn i { font-size: 1.8rem; flex-shrink: 0; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .login-container { grid-template-columns: 1fr; max-width: 480px; }
+      .login-left { display: none; }
+      .login-right { padding: 2rem 1.5rem; }
+    }
+    @media (max-width: 860px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+      .hamburger { display: block; }
+      .nav-links { display: none; flex-direction: column; width: 100%; }
+      .nav-links.open { display: flex; }
+      .notification-dropdown { width: 300px; right: -50px; }
+    }
+    @media (max-width: 500px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .container { padding: 0 0.8rem; }
+      .role-selector { grid-template-columns: repeat(3, 1fr); }
+      .login-page { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN PAGE
+============================================================ -->
+<div class="login-page" id="loginPage">
+  <div class="login-bg-animation">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+    <div class="floating-shape shape-4"></div>
+    <div class="floating-shape shape-5"></div>
+  </div>
+
+  <div class="login-top-actions">
+    <button class="action-btn" onclick="toggleLoginTheme()" title="Theme">
+      <i class="fas fa-moon" id="loginThemeIcon"></i>
+    </button>
+    <button class="action-btn" onclick="toggleLanguage()">
+      <i class="fas fa-globe"></i>
+      <span id="langLabel">EN</span>
+    </button>
+    <button class="action-btn" onclick="showHelp()">
+      <i class="fas fa-question-circle"></i>
+    </button>
+  </div>
+
+  <div class="login-container">
+    <div class="login-left">
+      <div class="login-brand">
+        <div class="login-logo" id="loginPageLogo">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h1 class="login-school-name" id="loginPageSchoolName">B.A.D SCHOOL</h1>
+        <p class="login-motto" id="loginPageMotto">"Building Academic Dreams"</p>
+        <div class="login-badges">
+          <span class="badge-mini">🏆 Est. 2010</span>
+          <span class="badge-mini">⭐ 4.9/5</span>
+          <span class="badge-mini">👥 167+ Users</span>
+        </div>
+      </div>
+
+      <div class="login-features">
+        <h3><i class="fas fa-star"></i> What you can do</h3>
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-user-graduate"></i></div>
+            <div>
+              <div class="feature-title">Student Management</div>
+              <div class="feature-desc">Track all student records</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+            <div>
+              <div class="feature-title">Attendance Tracking</div>
+              <div class="feature-desc">Real-time system</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div>
+              <div class="feature-title">Financial Management</div>
+              <div class="feature-desc">Complete fee tracking</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-sms"></i></div>
+            <div>
+              <div class="feature-title">SMS Notifications</div>
+              <div class="feature-desc">Instant updates</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-footer-info">
+        <div class="contact-item"><i class="fas fa-phone"></i><span>0792799701</span></div>
+        <div class="contact-item"><i class="fas fa-envelope"></i><span>barambaaime@gmail.com</span></div>
+        <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Gatsibo, Rwanda</span></div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="login-form-header">
+        <div class="login-greeting">
+          <div class="greeting-icon">👋</div>
+          <h2 id="greetingText">Welcome Back!</h2>
+        </div>
+        <p id="greetingSubtext">Login to access your dashboard</p>
+      </div>
+
+      <div class="login-tabs">
+        <button class="login-tab active" onclick="switchLoginTab('password', this)">
+          <i class="fas fa-key"></i> Password
+        </button>
+        <button class="login-tab" onclick="switchLoginTab('qr', this)">
+          <i class="fas fa-qrcode"></i> QR
+        </button>
+        <button class="login-tab" onclick="switchLoginTab('biometric', this)">
+          <i class="fas fa-fingerprint"></i> Bio
+        </button>
+      </div>
+
+      <div class="login-tab-content active" id="tab-password">
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label><i class="fas fa-user-tag"></i> Select Your Role</label>
+            <div class="role-selector">
+              <div class="role-option active" data-role="admin" onclick="selectRole('admin', this)">
+                <i class="fas fa-user-shield"></i><span>Admin</span>
+              </div>
+              <div class="role-option" data-role="teacher" onclick="selectRole('teacher', this)">
+                <i class="fas fa-chalkboard-teacher"></i><span>Teacher</span>
+              </div>
+              <div class="role-option" data-role="student" onclick="selectRole('student', this)">
+                <i class="fas fa-user-graduate"></i><span>Student</span>
+              </div>
+              <div class="role-option" data-role="parent" onclick="selectRole('parent', this)">
+                <i class="fas fa-users"></i><span>Parent</span>
+              </div>
+              <div class="role-option" data-role="accountant" onclick="selectRole('accountant', this)">
+                <i class="fas fa-calculator"></i><span>Accountant</span>
+              </div>
+            </div>
+            <input type="hidden" id="selectedRole" value="admin">
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Username or Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" id="loginUsername" placeholder="Enter username or email" required>
+              <button type="button" class="input-action" onclick="clearInput('loginUsername')">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="loginPassword" placeholder="Enter your password" required>
+              <button type="button" class="input-action" onclick="togglePasswordVisibility('loginPassword', this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="password-strength-indicator">
+              <div class="strength-bar" id="loginPwdStrength"></div>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="rememberMe">
+              <span class="checkmark"></span>
+              <span>Remember me</span>
+            </label>
+            <a href="#" onclick="showForgotPassword(event)" class="forgot-link">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn-login" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i>
+            <span class="btn-text">Login to Portal</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="login-tab-content" id="tab-qr">
+        <div style="text-align:center; padding:1rem;">
+          <div style="width:200px; height:200px; margin:0 auto 1rem; background:var(--bg-body); border-radius:16px; display:flex; align-items:center; justify-content:center; border:3px solid var(--school-color);">
+            <i class="fas fa-qrcode" style="font-size:5rem; color:var(--school-color); opacity:0.3;"></i>
+          </div>
+          <h3>Scan QR Code</h3>
+          <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Open mobile app and scan to login</p>
+        </div>
+      </div>
+
+      <div class="login-tab-content" id="tab-biometric">
+        <div style="text-align:center; padding:1.5rem;">
+          <div style="font-size:5rem; color:var(--school-color); margin-bottom:1rem;">
+            <i class="fas fa-fingerprint"></i>
+          </div>
+          <h3>Biometric Login</h3>
+          <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Place your finger on the sensor</p>
+          <button class="btn btn-primary" style="margin-top:1rem;" onclick="showToast('Biometric ready!', 'success')">
+            <i class="fas fa-fingerprint"></i> Start
+          </button>
+        </div>
+      </div>
+
+      <div class="login-divider"><span>Or continue with</span></div>
+
+      <div class="social-login">
+        <button class="social-btn" onclick="socialLogin('google')">
+          <i class="fab fa-google" style="color:#db4437;"></i> Google
+        </button>
+        <button class="social-btn" onclick="socialLogin('microsoft')">
+          <i class="fab fa-microsoft" style="color:#00a4ef;"></i> Microsoft
+        </button>
+      </div>
+
+      <div class="demo-credentials">
+        <div class="demo-header">
+          <i class="fas fa-bolt"></i>
+          <strong>Quick Demo (Click to fill)</strong>
+        </div>
+        <div class="demo-accounts">
+          <span class="demo-btn" onclick="fillDemo('admin')">
+            <i class="fas fa-user-shield"></i>
+            <div><div class="demo-role">Admin</div><div class="demo-cred">admin/admin</div></div>
+          </span>
+          <span class="demo-btn" onclick="fillDemo('teacher')">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <div><div class="demo-role">Teacher</div><div class="demo-cred">teacher/teacher</div></div>
+          </span>
+          <span class="demo-btn" onclick="fillDemo('student')">
+            <i class="fas fa-user-graduate"></i>
+            <div><div class="demo-role">Student</div><div class="demo-cred">student/student</div></div>
+          </span>
+          <span class="demo-btn" onclick="fillDemo('parent')">
+            <i class="fas fa-users"></i>
+            <div><div class="demo-role">Parent</div><div class="demo-cred">parent/parent</div></div>
+          </span>
+          <span class="demo-btn" onclick="fillDemo('accountant')">
+            <i class="fas fa-calculator"></i>
+            <div><div class="demo-role">Accountant</div><div class="demo-cred">accountant</div></div>
+          </span>
+        </div>
+      </div>
+
+      <div class="login-page-footer">
+        <p>© 2026 B.A.D SCHOOL · v14.0.0</p>
+        <p>Created by <strong>BARAMBA Aime De Dieu</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FORCE PASSWORD CHANGE MODAL (First Login)
+============================================================ -->
+<div class="force-password-modal" id="forcePasswordModal">
+  <div class="force-password-box">
+    <div class="force-password-header">
+      <div class="force-password-icon">
+        <i class="fas fa-key"></i>
+      </div>
+      <h2>🔐 Change Your Password</h2>
+      <p>For your security, please change your default password</p>
+    </div>
+    
+    <div class="force-password-info">
+      <i class="fas fa-info-circle"></i> This is your first login. You must change your password before continuing.
+    </div>
+    
+    <form onsubmit="event.preventDefault(); submitForcePasswordChange();">
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Current Password</label>
+        <input type="password" id="forceCurrentPassword" placeholder="Enter current password" required>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> New Password</label>
+        <input type="password" id="forceNewPassword" placeholder="Min 8 characters" required>
+        <div class="password-strength-indicator" style="margin-top:0.3rem;">
+          <div class="strength-bar" id="forcePwdStrength"></div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Confirm New Password</label>
+        <input type="password" id="forceConfirmPassword" placeholder="Confirm new password" required>
+      </div>
+      
+      <button type="submit" class="btn-login" style="width:100%; padding:0.9rem;">
+        <i class="fas fa-save"></i> Change Password & Continue
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP (Hidden until login)
+============================================================ -->
+<div id="mainApp" style="display:none;">
+
+<!-- SCHOOL HEADER -->
+<header class="school-header">
+  <div class="container">
+    <div class="school-brand">
+      <div class="school-logo-container" onclick="document.getElementById('schoolLogoUpload').click()">
+        <i class="fas fa-graduation-cap logo-placeholder" id="schoolLogoPlaceholder"></i>
+        <img id="schoolLogoImage" style="display:none;" alt="Logo">
+        <div class="logo-upload-overlay"><i class="fas fa-camera"></i></div>
+      </div>
+      <input type="file" id="schoolLogoUpload" accept="image/*" style="display:none;" onchange="uploadSchoolLogo(event)">
+      <div>
+        <div class="school-name-display" id="schoolNameDisplay">B.A.D <span>SCHOOL</span></div>
+        <div class="school-motto-display" id="schoolMottoDisplay">"Building Academic Dreams"</div>
+        <span class="school-version-badge" id="schoolVersionBadge">v14.0.0</span>
+      </div>
+    </div>
+    <div class="school-contact">
+      <div class="user-badge">
+        <div class="user-avatar-badge" id="userAvatarIcon">A</div>
+        <div class="user-info-badge">
+          <span class="user-name-badge" id="userNameDisplay">Admin User</span>
+          <span class="user-role-badge" id="userRoleDisplay">Admin</span>
+        </div>
+      </div>
+      <button class="btn btn-warning btn-sm" onclick="openChangePasswordModal()">
+        <i class="fas fa-key"></i> Change Password
+      </button>
+      <button class="btn btn-danger btn-sm" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <div class="logo"><i class="fas fa-school"></i> <span id="navSchoolName">B.A.D</span> Portal</div>
+    <button class="hamburger" onclick="toggleMobile()">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a data-page="home" onclick="navigateTo('home')" class="active">🏠 Home</a>
+      <a data-page="admin" data-roles="admin" onclick="navigateTo('admin')">🛡️ Admin</a>
+      <a data-page="teacher" data-roles="teacher" onclick="navigateTo('teacher')">👨‍🏫 Teacher</a>
+      <a data-page="student" data-roles="student" onclick="navigateTo('student')">👨‍🎓 My Dashboard</a>
+      <a data-page="parent" data-roles="parent" onclick="navigateTo('parent')">👨‍👩‍👧 Parent</a>
+      <a data-page="accountant" data-roles="accountant" onclick="navigateTo('accountant')">💰 Finance</a>
+      <a data-page="gallery" onclick="navigateTo('gallery')">🖼️ Gallery</a>
+    </div>
+    <div class="nav-actions">
+      <div class="notification-bell" onclick="toggleNotifications()">
+        <i class="fas fa-bell"></i>
+        <span class="badge-count" id="notiCount">3</span>
+        <div class="notification-dropdown" id="notiDropdown">
+          <div class="notification-item unread">
+            <i class="fas fa-bell noti-icon"></i>
+            <div class="noti-content">
+              <div class="noti-title">Welcome to B.A.D SCHOOL!</div>
+              <div class="noti-time">Just now</div>
+            </div>
+          </div>
+          <div class="notification-item unread">
+            <i class="fas fa-shield-alt noti-icon"></i>
+            <div class="noti-content">
+              <div class="noti-title">🔐 Please change your password</div>
+              <div class="noti-time">1 min ago</div>
+            </div>
+          </div>
+          <div class="notification-item" style="text-align:center; padding:0.5rem;">
+            <button class="btn btn-sm btn-primary" onclick="markAllRead()">Mark all as read</button>
+          </div>
+        </div>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i> <span id="themeLabel">Dark</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="container">
+
+  <!-- HOME PAGE -->
+  <section id="page-home" class="page-section active" data-roles="admin,teacher,student,parent,accountant">
+    <div class="welcome-banner">
+      <div>
+        <h2 id="welcomeMessage">Welcome back! 👋</h2>
+        <p id="welcomeSubtext">You are logged in as <strong id="welcomeRole">Admin</strong></p>
+      </div>
+      <div class="banner-icon"><i class="fas fa-school"></i></div>
+    </div>
+    <div class="grid-4">
+      <div class="stat-card"><div class="icon"><i class="fas fa-user-graduate"></i></div><div class="number">143</div><div class="label">Students</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-chalkboard-teacher"></i></div><div class="number">24</div><div class="label">Teachers</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-calendar-check"></i></div><div class="number">89%</div><div class="label">Attendance</div></div>
+      <div class="stat-card"><div class="icon"><i class="fas fa-book"></i></div><div class="number">12</div><div class="label">Subjects</div></div>
+    </div>
+    
+    <div class="card" style="background:linear-gradient(135deg, var(--school-color), #e6b800); color:#fff; border:none;">
+      <h3 style="color:#fff;"><i class="fas fa-bullhorn"></i> Welcome to B.A.D SCHOOL</h3>
+      <p style="color:#fff; opacity:0.9;">Use the navigation menu to access your dashboard features.</p>
+    </div>
+  </section>
+
+  <!-- ADMIN DASHBOARD -->
+  <section id="page-admin" class="page-section" data-roles="admin">
+    <h2 class="section-title"><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+    
+    <div class="welcome-banner" style="background:linear-gradient(135deg, #0a1e33, #1a3a5a);">
+      <div>
+        <h2>👑 Full System Control</h2>
+        <p>Manage everything from one place</p>
+      </div>
+      <div class="banner-icon"><i class="fas fa-crown"></i></div>
+    </div>
+
+    <div class="grid-5" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem;">
+      <div class="stat-card" style="border-top:4px solid var(--school-color);"><div class="icon"><i class="fas fa-user-graduate"></i></div><div class="number">143</div><div class="label">Students</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--teacher-color);"><div class="icon"><i class="fas fa-chalkboard-teacher"></i></div><div class="number">24</div><div class="label">Teachers</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--primary);"><div class="icon"><i class="fas fa-users"></i></div><div class="number">167</div><div class="label">Total Users</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--money-color);"><div class="icon"><i class="fas fa-money-bill-wave"></i></div><div class="number">4.25M</div><div class="label">Fees (RWF)</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--success);"><div class="icon"><i class="fas fa-calendar-check"></i></div><div class="number">89%</div><div class="label">Attendance</div></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--school-color);">
+      <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0.5rem;">
+        <button class="quick-action-btn" onclick="showToast('User creation opened','success')"><i class="fas fa-user-plus" style="color:var(--success);"></i><span>Create User</span></button>
+        <button class="quick-action-btn" onclick="showToast('Student admission opened','success')"><i class="fas fa-user-graduate" style="color:var(--school-color);"></i><span>Admit Student</span></button>
+        <button class="quick-action-btn" onclick="showToast('Teacher hiring opened','success')"><i class="fas fa-chalkboard-teacher" style="color:var(--teacher-color);"></i><span>Hire Teacher</span></button>
+        <button class="quick-action-btn" onclick="showToast('Approvals opened','success')"><i class="fas fa-check-double" style="color:var(--warning);"></i><span>Approvals</span></button>
+        <button class="quick-action-btn" onclick="showToast('SMS center opened','success')"><i class="fas fa-sms" style="color:var(--sms-color);"></i><span>Send SMS</span></button>
+        <button class="quick-action-btn" onclick="showToast('Settings opened','success')"><i class="fas fa-cog" style="color:var(--db-color);"></i><span>Settings</span></button>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card"><h4><i class="fas fa-chart-pie" style="color:var(--primary);"></i> Users Distribution</h4><canvas id="adminUsersChart" height="200"></canvas></div>
+      <div class="card"><h4><i class="fas fa-chart-line" style="color:var(--success);"></i> Monthly Overview</h4><canvas id="adminMonthlyChart" height="200"></canvas></div>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-users-cog"></i> User Management</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>admin</td><td>System Admin</td>
+              <td><span class="badge badge-gold">Admin</span></td>
+              <td><span class="badge badge-done">Active</span></td>
+              <td>
+                <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-warning"><i class="fas fa-key"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>kamanzi</td><td>Dr. Kamanzi</td>
+              <td><span class="badge badge-purple">Teacher</span></td>
+              <td><span class="badge badge-done">Active</span></td>
+              <td>
+                <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-warning"><i class="fas fa-key"></i></button>
+                <button class="btn btn-sm btn-sms"><i class="fas fa-sms"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>alice</td><td>Alice Uwimana</td>
+              <td><span class="badge badge-info">Student</span></td>
+              <td><span class="badge badge-done">Active</span></td>
+              <td>
+                <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-warning"><i class="fas fa-key"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--warning);">
+      <h4><i class="fas fa-check-double" style="color:var(--warning);"></i> Pending Approvals</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>From</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-info">Attendance</span></td>
+              <td>Dr. Kamanzi</td>
+              <td>
+                <button class="btn btn-sm btn-success" onclick="showToast('Approved!','success')">Approve</button>
+                <button class="btn btn-sm btn-danger" onclick="showToast('Rejected','error')">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-progress">Marks</span></td>
+              <td>Ms. Uwase</td>
+              <td>
+                <button class="btn btn-sm btn-success" onclick="showToast('Approved!','success')">Approve</button>
+                <button class="btn btn-sm btn-danger" onclick="showToast('Rejected','error')">Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEACHER DASHBOARD -->
+  <section id="page-teacher" class="page-section" data-roles="teacher">
+    <h2 class="section-title"><i class="fas fa-chalkboard-teacher" style="color:var(--teacher-color);"></i> Teacher Dashboard</h2>
+    
+    <div class="welcome-banner" style="background:linear-gradient(135deg, #6f42c1, #5a32a3);">
+      <div>
+        <h2>👋 Muraho, Dr. Kamanzi!</h2>
+        <p>Physics Teacher · Senior 4 · 28 Students</p>
+      </div>
+      <div class="banner-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+    </div>
+
+    <div class="grid-4">
+      <div class="stat-card" style="border-top:4px solid var(--teacher-color);"><div class="icon"><i class="fas fa-user-graduate"></i></div><div class="number">28</div><div class="label">My Students</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--success);"><div class="icon"><i class="fas fa-calendar-check"></i></div><div class="number">89%</div><div class="label">Avg Attendance</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--primary);"><div class="icon"><i class="fas fa-chart-line"></i></div><div class="number">76%</div><div class="label">Class Average</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--warning);"><div class="icon"><i class="fas fa-clock"></i></div><div class="number">3</div><div class="label">Pending Tasks</div></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--teacher-color);">
+      <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0.5rem;">
+        <button class="quick-action-btn" onclick="showToast('Attendance opened','success')"><i class="fas fa-calendar-check" style="color:var(--success);"></i><span>Mark Attendance</span></button>
+        <button class="quick-action-btn" onclick="showToast('Marks opened','success')"><i class="fas fa-graduation-cap" style="color:var(--primary);"></i><span>Enter Marks</span></button>
+        <button class="quick-action-btn" onclick="showToast('Assignment opened','success')"><i class="fas fa-pencil-alt" style="color:var(--warning);"></i><span>Create Assignment</span></button>
+        <button class="quick-action-btn" onclick="showToast('Exam opened','success')"><i class="fas fa-file-signature" style="color:var(--danger);"></i><span>Schedule Exam</span></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-calendar-check" style="color:var(--success);"></i> Mark Attendance</h4>
+      <form onsubmit="event.preventDefault(); showToast('Attendance submitted! SMS sent.', 'success');">
+        <div class="form-row">
+          <div class="form-group"><label>Date</label><input type="date" value="2026-07-28"></div>
+          <div class="form-group"><label>Class</label><select><option>Senior 4</option></select></div>
+          <div class="form-group"><label>Subject</label><select><option>Physics</option></select></div>
+          <div class="form-group" style="display:flex;align-items:end;">
+            <button type="submit" class="btn btn-success" style="padding:0.6rem 1.5rem;">
+              <i class="fas fa-save"></i> Submit & SMS
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-graduation-cap" style="color:var(--primary);"></i> Enter Marks</h4>
+      <form onsubmit="event.preventDefault(); showToast('Marks submitted! SMS sent.', 'success');">
+        <div class="form-row">
+          <div class="form-group"><label>Exam</label><select><option>Mid-Term</option></select></div>
+          <div class="form-group"><label>Subject</label><select><option>Physics</option></select></div>
+          <div class="form-group"><label>Class</label><select><option>Senior 4</option></select></div>
+          <div class="form-group" style="display:flex;align-items:end;">
+            <button type="submit" class="btn btn-primary" style="padding:0.6rem 1.5rem;">
+              <i class="fas fa-save"></i> Submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- STUDENT DASHBOARD -->
+  <section id="page-student" class="page-section" data-roles="student">
+    <h2 class="section-title"><i class="fas fa-user-graduate" style="color:var(--school-color);"></i> Student Dashboard</h2>
+    
+    <div class="welcome-banner" style="background:linear-gradient(135deg, #2ecc71, #27ae60);">
+      <div>
+        <h2>👋 Muraho, Alice Uwimana!</h2>
+        <p>Senior 4 · BAD-2026-001 · GPA: 3.8</p>
+      </div>
+      <div class="banner-icon"><i class="fas fa-user-graduate"></i></div>
+    </div>
+
+    <div class="grid-4">
+      <div class="stat-card" style="border-top:4px solid var(--success);"><div class="icon"><i class="fas fa-calendar-check"></i></div><div class="number">89%</div><div class="label">My Attendance</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--primary);"><div class="icon"><i class="fas fa-trophy"></i></div><div class="number">3.8</div><div class="label">My GPA</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--warning);"><div class="icon"><i class="fas fa-book"></i></div><div class="number">5</div><div class="label">My Subjects</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--money-color);"><div class="icon"><i class="fas fa-money-bill-wave"></i></div><div class="number">Paid</div><div class="label">Fee Status</div></div>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-trophy" style="color:var(--final-color);"></i> My Marks</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Subject</th><th>Score</th><th>Grade</th></tr></thead>
+          <tbody>
+            <tr><td>Mathematics</td><td>85%</td><td><span class="badge badge-done">A</span></td></tr>
+            <tr><td>Physics</td><td>72%</td><td><span class="badge badge-progress">B+</span></td></tr>
+            <tr><td>English</td><td>91%</td><td><span class="badge badge-done">A+</span></td></tr>
+            <tr><td>Chemistry</td><td>68%</td><td><span class="badge badge-pending">B</span></td></tr>
+            <tr><td>Computer Science</td><td>88%</td><td><span class="badge badge-done">A</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem; padding:1rem; background:linear-gradient(135deg, var(--success), #168a5a); color:#fff; border-radius:12px; text-align:center;">
+        <div style="font-size:1.8rem; font-weight:700;">80.8%</div>
+        <div style="font-size:0.8rem; opacity:0.9;">Overall Average · Grade: <strong>A</strong></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-calendar-check" style="color:var(--success);"></i> My Attendance</h4>
+      <div class="grid-3">
+        <div class="stat-card" style="padding:0.5rem;"><div class="number" style="font-size:1.3rem; color:var(--success);">142</div><div class="label" style="font-size:0.65rem;">Present</div></div>
+        <div class="stat-card" style="padding:0.5rem;"><div class="number" style="font-size:1.3rem; color:var(--danger);">18</div><div class="label" style="font-size:0.65rem;">Absent</div></div>
+        <div class="stat-card" style="padding:0.5rem;"><div class="number" style="font-size:1.3rem; color:var(--warning);">3</div><div class="label" style="font-size:0.65rem;">Late</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARENT DASHBOARD -->
+  <section id="page-parent" class="page-section" data-roles="parent">
+    <h2 class="section-title"><i class="fas fa-users" style="color:var(--warning);"></i> Parent Dashboard</h2>
+    
+    <div class="welcome-banner" style="background:linear-gradient(135deg, #e74c3c, #c0392b);">
+      <div>
+        <h2>👨‍👩‍👧 Welcome, Mr. Uwimana!</h2>
+        <p>Track your children's progress</p>
+      </div>
+      <div class="banner-icon"><i class="fas fa-users"></i></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--school-color);">
+      <h4><i class="fas fa-child"></i> My Children</h4>
+      <div class="grid-2">
+        <div class="card" style="text-align:center; padding:1rem;">
+          <div style="width:60px; height:60px; border-radius:50%; background:var(--school-color); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:700; margin:0 auto 0.5rem;">A</div>
+          <h4>Alice Uwimana</h4>
+          <p style="color:var(--text-secondary); font-size:0.85rem;">Senior 4 · BAD-2026-001</p>
+          <div style="display:flex; gap:0.5rem; justify-content:center; margin-top:0.5rem;">
+            <span class="badge badge-done">Active</span>
+            <span class="badge badge-info">GPA: 3.8</span>
+          </div>
+        </div>
+        <div class="card" style="text-align:center; padding:1rem;">
+          <div style="width:60px; height:60px; border-radius:50%; background:var(--teacher-color); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:700; margin:0 auto 0.5rem;">B</div>
+          <h4>Bob Munezero</h4>
+          <p style="color:var(--text-secondary); font-size:0.85rem;">Senior 3 · BAD-2026-002</p>
+          <div style="display:flex; gap:0.5rem; justify-content:center; margin-top:0.5rem;">
+            <span class="badge badge-done">Active</span>
+            <span class="badge badge-info">GPA: 3.2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <div class="stat-card" style="border-top:4px solid var(--success);"><div class="icon"><i class="fas fa-calendar-check"></i></div><div class="number">89%</div><div class="label">Alice's Attendance</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--primary);"><div class="icon"><i class="fas fa-trophy"></i></div><div class="number">A</div><div class="label">Alice's Grade</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--warning);"><div class="icon"><i class="fas fa-calendar-check"></i></div><div class="number">76%</div><div class="label">Bob's Attendance</div></div>
+      <div class="stat-card" style="border-top:4px solid var(--money-color);"><div class="icon"><i class="fas fa-money-bill-wave"></i></div><div class="number">Paid</div><div class="label">Fees Status</div></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--money-color);">
+      <h4><i class="fas fa-money-bill-wave" style="color:var(--money-color);"></i> School Fees</h4>
+      <div class="grid-3">
+        <div class="finance-stat money"><div class="number">150,000</div><div class="label">Total (RWF)</div></div>
+        <div class="finance-stat balance"><div class="number">150,000</div><div class="label">Paid (RWF)</div></div>
+        <div class="finance-stat" style="background:linear-gradient(135deg, #2ecc71, #27ae60);"><div class="number">0</div><div class="label">Balance</div></div>
+      </div>
+      <div style="margin-top:1rem; padding:1rem; background:var(--approved-bg); border-radius:12px; text-align:center;">
+        <i class="fas fa-check-circle" style="color:#0f5e32; font-size:2rem;"></i>
+        <div style="font-weight:700; color:#0f5e32; margin-top:0.5rem;">✅ All fees paid!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCOUNTANT DASHBOARD -->
+  <section id="page-accountant" class="page-section" data-roles="accountant">
+    <h2 class="section-title"><i class="fas fa-calculator" style="color:var(--finance-color);"></i> Accountant Dashboard</h2>
+    
+    <div class="welcome-banner" style="background:linear-gradient(135deg, #28a745, #1e8449);">
+      <div>
+        <h2>💰 Welcome, Mrs. Uwera!</h2>
+        <p>Financial Management Dashboard</p>
+      </div>
+      <div class="banner-icon"><i class="fas fa-calculator"></i></div>
+    </div>
+
+    <div class="grid-4">
+      <div class="finance-stat money"><div class="number">4,250,000</div><div class="label">Fees (RWF)</div></div>
+      <div class="finance-stat expense"><div class="number">1,850,000</div><div class="label">Expenses (RWF)</div></div>
+      <div class="finance-stat balance"><div class="number">2,400,000</div><div class="label">Net Balance</div></div>
+      <div class="finance-stat" style="background:linear-gradient(135deg, #17a2b8, #138496);"><div class="number">18M</div><div class="label">Sales</div></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--money-color);">
+      <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0.5rem;">
+        <button class="quick-action-btn" onclick="showToast('Record fee opened','success')"><i class="fas fa-coins" style="color:var(--money-color);"></i><span>Record Fee</span></button>
+        <button class="quick-action-btn" onclick="showToast('Payroll opened','success')"><i class="fas fa-money-check-alt" style="color:var(--primary);"></i><span>Process Payroll</span></button>
+        <button class="quick-action-btn" onclick="showToast('Expense opened','success')"><i class="fas fa-receipt" style="color:var(--expense-color);"></i><span>Record Expense</span></button>
+        <button class="quick-action-btn" onclick="showToast('Sale opened','success')"><i class="fas fa-chart-line" style="color:var(--db-color);"></i><span>Record Sale</span></button>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card"><h4><i class="fas fa-chart-pie" style="color:var(--finance-color);"></i> Income Distribution</h4><canvas id="acctPieChart" height="200"></canvas></div>
+      <div class="card"><h4><i class="fas fa-chart-line" style="color:var(--primary);"></i> Monthly Cash Flow</h4><canvas id="acctLineChart" height="200"></canvas></div>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-coins" style="color:var(--money-color);"></i> Record Fee Payment</h4>
+      <form onsubmit="event.preventDefault(); showToast('Fee recorded! SMS sent to parent.', 'success');">
+        <div class="form-row">
+          <div class="form-group"><label>Student</label><select><option>Alice Uwimana</option><option>Bob Munezero</option></select></div>
+          <div class="form-group"><label>Amount (RWF)</label><input type="number" placeholder="50000"></div>
+          <div class="form-group"><label>Method</label><select><option>Cash</option><option>MTN MoMo</option><option>Airtel Money</option></select></div>
+          <div class="form-group" style="display:flex;align-items:end;">
+            <button type="submit" class="btn btn-money" style="padding:0.6rem 1.5rem;">
+              <i class="fas fa-save"></i> Save
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="page-gallery" class="page-section" data-roles="admin,teacher,student,parent,accountant">
+    <h2 class="section-title"><i class="fas fa-images" style="color:var(--school-color);"></i> School Gallery</h2>
+    <div class="card" style="text-align:center;">
+      <div style="border: 2px dashed var(--border-color); border-radius: 12px; padding: 2rem;">
+        <div style="font-size: 3rem; color: var(--school-color);"><i class="fas fa-cloud-upload-alt"></i></div>
+        <div style="color: var(--text-secondary); margin-top: 0.5rem;">Upload school photos and events</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div><i class="fas fa-crown" style="color:#f9c74f;"></i> <strong>BARAMBA Aime De Dieu</strong> · <i class="fab fa-whatsapp" style="color:#25d366;"></i> 0792799701</div>
+    <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">About</a><a href="#">Contact</a></div>
+    <div style="font-size:0.75rem;" id="footerVersion">© 2026 B.A.D SCHOOL · v14.0.0</div>
+  </div>
+</footer>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Success</span>
+  <button class="toast-close" onclick="closeToast()">✕</button>
+</div>
+
+<!-- HELP MODAL -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal-box" style="max-width:500px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-question-circle" style="color:var(--school-color);"></i> Help</h3>
+      <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
+    </div>
+    <div style="padding:1rem;">
+      <h4>Need Help?</h4>
+      <p style="color:var(--text-secondary); margin-bottom:1rem;">Contact us:</p>
+      <div style="background:var(--bg-body); padding:1rem; border-radius:12px; margin-bottom:0.5rem;">
+        <i class="fas fa-phone" style="color:var(--success);"></i> <strong>0792799701</strong>
+      </div>
+      <div style="background:var(--bg-body); padding:1rem; border-radius:12px; margin-bottom:0.5rem;">
+        <i class="fas fa-envelope" style="color:var(--primary);"></i> <strong>barambaaime@gmail.com</strong>
+      </div>
+      <div style="background:var(--bg-body); padding:1rem; border-radius:12px;">
+        <i class="fab fa-whatsapp" style="color:#25d366;"></i> <strong>0792799701</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL (Voluntary) -->
+<div class="modal-overlay" id="changePasswordModal">
+  <div class="modal-box" style="max-width:500px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-key" style="color:var(--school-color);"></i> Change Password</h3>
+      <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
+    </div>
+    <form onsubmit="event.preventDefault(); submitPasswordChange();">
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Current Password</label>
+        <input type="password" id="currentPassword" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> New Password</label>
+        <input type="password" id="newPassword" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Confirm Password</label>
+        <input type="password" id="confirmPassword" required>
+      </div>
+      <button type="submit" class="btn-login" style="width:100%;">
+        <i class="fas fa-save"></i> Change Password
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// COMPLETE JAVASCRIPT v14.0
+// ============================================================
+
+// USER SESSION
+let currentUser = { role: null, username: null, fullName: null };
+
+// PERMISSIONS MATRIX
+const PERMISSIONS = {
+  admin: { pages: ['home', 'admin', 'gallery'] },
+  teacher: { pages: ['home', 'teacher', 'gallery'] },
+  student: { pages: ['home', 'student', 'gallery'] },
+  parent: { pages: ['home', 'parent', 'gallery'] },
+  accountant: { pages: ['home', 'accountant', 'gallery'] }
+};
+
+// USER DEMO DATA
+const USERS = {
+  admin: { username: 'admin', password: 'admin', role: 'admin', fullName: 'System Administrator', hasChangedPassword: false },
+  teacher: { username: 'teacher', password: 'teacher', role: 'teacher', fullName: 'Dr. Kamanzi', hasChangedPassword: false },
+  student: { username: 'student', password: 'student', role: 'student', fullName: 'Alice Uwimana', hasChangedPassword: false },
+  parent: { username: 'parent', password: 'parent', role: 'parent', fullName: 'Mr. Uwimana', hasChangedPassword: false },
+  accountant: { username: 'accountant', password: 'accountant', role: 'accountant', fullName: 'Mrs. Uwera', hasChangedPassword: false }
+};
+
+// ===== TOAST =====
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast show ' + type;
+  const icon = t.querySelector('i');
+  icon.className = type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-exclamation-triangle';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 4000);
+}
+function closeToast() { document.getElementById('toast').classList.remove('show'); }
+
+// ===== ROLE SELECTION =====
+function selectRole(role, element) {
+  document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
+  element.classList.add('active');
+  document.getElementById('selectedRole').value = role;
+}
+
+function togglePasswordVisibility(fieldId, btn) {
+  const field = document.getElementById(fieldId);
+  const icon = btn.querySelector('i');
+  if (field.type === 'password') { field.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+  else { field.type = 'password'; icon.className = 'fas fa-eye'; }
+}
+
+function clearInput(fieldId) {
+  document.getElementById(fieldId).value = '';
+  document.getElementById(fieldId).focus();
+}
+
+// ===== LOGIN SUBMIT =====
+function handleLoginSubmit(event) {
+  event.preventDefault();
+  const role = document.getElementById('selectedRole').value;
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  const btn = document.getElementById('loginBtn');
+  
+  if (!username || !password) {
+    showToast('Please enter username and password', 'error');
+    return;
+  }
+  
+  btn.classList.add('loading');
+  const btnText = btn.querySelector('.btn-text');
+  if (btnText) btnText.textContent = 'Logging in...';
+  
+  setTimeout(() => {
+    const demo = USERS[role];
+    if (demo && username === demo.username && password === demo.password) {
+      // Save session
+      currentUser = {
+        role: demo.role,
+        username: demo.username,
+        fullName: demo.fullName,
+        hasChangedPassword: demo.hasChangedPassword || false
+      };
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      
+      if (document.getElementById('rememberMe').checked) {
+        localStorage.setItem('rememberedUser', username);
+      }
+      
+      // Hide login
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('mainApp').style.display = 'block';
+      
+      // Apply access
+      applyRoleAccess(role);
+      updateUserInterface(currentUser);
+      
+      // Check if password needs change
+      if (!currentUser.hasChangedPassword) {
+        setTimeout(() => {
+          document.getElementById('forcePasswordModal').classList.add('open');
+          document.getElementById('forceCurrentPassword').value = password;
+        }, 800);
+      } else {
+        showToast(`Welcome back, ${demo.fullName}! 🎉`, 'success');
+        setTimeout(() => navigateTo(getDashboard(role)), 500);
+      }
+      
+    } else {
+      btn.classList.remove('loading');
+      if (btnText) btnText.textContent = 'Login to Portal';
+      showToast('❌ Invalid credentials! Try demo accounts.', 'error');
+      btn.style.animation = 'shake 0.5s';
+      setTimeout(() => btn.style.animation = '', 500);
+    }
+  }, 1000);
+}
+
+function getDashboard(role) {
+  const dashboards = {
+    'admin': 'admin',
+    'teacher': 'teacher',
+    'student': 'student',
+    'parent': 'parent',
+    'accountant': 'accountant'
+  };
+  return dashboards[role] || 'home';
+}
+
+// ===== FORCE PASSWORD CHANGE =====
+function submitForcePasswordChange() {
+  const current = document.getElementById('forceCurrentPassword').value;
+  const newPwd = document.getElementById('forceNewPassword').value;
+  const confirm = document.getElementById('forceConfirmPassword').value;
+  
+  if (!current || !newPwd || !confirm) {
+    showToast('Please fill all fields', 'error');
+    return;
+  }
+  
+  if (newPwd !== confirm) {
+    showToast('❌ Passwords do not match!', 'error');
+    return;
+  }
+  
+  if (newPwd.length < 8) {
+    showToast('❌ Password must be at least 8 characters', 'error');
+    return;
+  }
+  
+  // Verify current password
+  const demo = USERS[currentUser.role];
+  if (current !== demo.password) {
+    showToast('❌ Current password is incorrect', 'error');
+    return;
+  }
+  
+  // Save new password
+  demo.password = newPwd;
+  demo.hasChangedPassword = true;
+  currentUser.hasChangedPassword = true;
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  
+  // Close modal
+  document.getElementById('forcePasswordModal').classList.remove('open');
+  
+  // Show success
+  showToast('✅ Password changed successfully! 🎉', 'success');
+  
+  // Navigate to dashboard
+  setTimeout(() => {
+    showToast(`Welcome, ${currentUser.fullName}!`, 'success');
+    navigateTo(getDashboard(currentUser.role));
+  }, 1000);
+}
+
+// ===== FORCE PASSWORD STRENGTH =====
+document.addEventListener('DOMContentLoaded', function() {
+  const pwd = document.getElementById('forceNewPassword');
+  const bar = document.getElementById('forcePwdStrength');
+  if (pwd && bar) {
+    pwd.addEventListener('input', function() {
+      const val = this.value;
+      let strength = 0;
+      if (val.length >= 6) strength++;
+      if (val.length >= 10) strength++;
+      if (/[a-z]/.test(val) && /[A-Z]/.test(val)) strength++;
+      if (/\d/.test(val)) strength++;
+      if (/[^a-zA-Z0-9]/.test(val)) strength++;
+      bar.className = 'strength-bar';
+      if (val.length === 0) return;
+      if (strength <= 1) bar.classList.add('weak');
+      else if (strength <= 3) bar.classList.add('medium');
+      else bar.classList.add('strong');
+    });
+  }
+  
+  const loginPwd = document.getElementById('loginPassword');
+  const loginBar = document.getElementById('loginPwdStrength');
+  if (loginPwd && loginBar) {
+    loginPwd.addEventListener('input', function() {
+      const val = this.value;
+      let strength = 0;
+      if (val.length >= 6) strength++;
+      if (val.length >= 10) strength++;
+      if (/[a-z]/.test(val) && /[A-Z]/.test(val)) strength++;
+      if (/\d/.test(val)) strength++;
+      if (/[^a-zA-Z0-9]/.test(val)) strength++;
+      loginBar.className = 'strength-bar';
+      if (val.length === 0) return;
+      if (strength <= 1) loginBar.classList.add('weak');
+      else if (strength <= 3) loginBar.classList.add('medium');
+      else loginBar.classList.add('strong');
+    });
+  }
+});
+
+// ===== FILL DEMO =====
+function fillDemo(role) {
+  const user = USERS[role];
+  if (user) {
+    document.getElementById('loginUsername').value = user.username;
+    document.getElementById('loginPassword').value = user.password;
+    const roleOption = document.querySelector(`.role-option[data-role="${role}"]`);
+    if (roleOption) {
+      document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
+      roleOption.classList.add('active');
+      document.getElementById('selectedRole').value = role;
+    }
+    showToast(`✅ Demo filled: ${role}`, 'success');
+  }
+}
+
+// ===== SWITCH TAB =====
+function switchLoginTab(tab, btn) {
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.login-tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+// ===== FORGOT PASSWORD =====
+function showForgotPassword(event) {
+  event.preventDefault();
+  const username = document.getElementById('loginUsername').value.trim();
+  if (!username) return showToast('Enter your username first', 'warning');
+  showToast(`📧 Reset link sent to ${username}`, 'success');
+}
+
+function socialLogin(provider) {
+  showToast(`${provider} login coming soon!`, 'info');
+}
+
+function toggleLoginTheme() {
+  document.body.classList.toggle('dark-mode');
+  const icon = document.getElementById('loginThemeIcon');
+  icon.className = document.body.classList.contains('dark-mode') ? 'fas fa-sun' : 'fas fa-moon';
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+}
+
+let currentLang = 'en';
+function toggleLanguage() {
+  const langs = ['en', 'rw', 'fr'];
+  const labels = { en: 'EN', rw: 'RW', fr: 'FR' };
+  currentLang = langs[(langs.indexOf(currentLang) + 1) % langs.length];
+  document.getElementById('langLabel').textContent = labels[currentLang];
+  
+  const greetings = {
+    en: { title: 'Welcome Back!', sub: 'Login to access your dashboard' },
+    rw: { title: 'Murakaza Neza!', sub: 'Injira kugira ngo ubone dashboard' },
+    fr: { title: 'Bon Retour!', sub: 'Connectez-vous' }
+  };
+  document.getElementById('greetingText').textContent = greetings[currentLang].title;
+  document.getElementById('greetingSubtext').textContent = greetings[currentLang].sub;
+  showToast(`🌍 ${currentLang.toUpperCase()}`, 'success');
+}
+
+function showHelp() {
+  document.getElementById('helpModal').classList.add('open');
+}
+
+function closeModal(modalId) {
+  const el = document.getElementById(modalId);
+  if (el) el.classList.remove('open');
+}
+
+// ===== ROLE ACCESS CONTROL =====
+function applyRoleAccess(role) {
+  const permissions = PERMISSIONS[role];
+  if (!permissions) return;
+  
+  // Hide nav links
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    const pageId = link.getAttribute('data-page');
+    const allowedRoles = (link.getAttribute('data-roles') || '').split(',');
+    
+    if (link.hasAttribute('data-roles')) {
+      if (allowedRoles.includes(role)) {
+        link.classList.remove('hidden-by-role');
+        link.style.display = 'flex';
+      } else {
+        link.classList.add('hidden-by-role');
+        link.style.display = 'none';
+      }
+    }
+  });
+  
+  // Hide pages
+  document.querySelectorAll('.page-section').forEach(section => {
+    const sectionRoles = section.getAttribute('data-roles');
+    if (sectionRoles) {
+      const allowedRoles = sectionRoles.split(',');
+      if (allowedRoles.includes(role)) {
+        section.classList.remove('hidden-by-role');
+      } else {
+        section.classList.add('hidden-by-role');
+        section.classList.remove('active');
+      }
+    }
+  });
+}
+
+function updateUserInterface(user) {
+  const avatar = document.getElementById('userAvatarIcon');
+  const name = document.getElementById('userNameDisplay');
+  const role = document.getElementById('userRoleDisplay');
+  const welcomeRole = document.getElementById('welcomeRole');
+  
+  if (avatar) {
+    const initials = user.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    avatar.textContent = initials;
+  }
+  if (name) name.textContent = user.fullName;
+  if (role) role.textContent = user.role.toUpperCase();
+  if (welcomeRole) welcomeRole.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  
+  const welcomeMessage = document.getElementById('welcomeMessage');
+  if (welcomeMessage) welcomeMessage.textContent = `Welcome, ${user.fullName}! 👋`;
+}
+
+// ===== NAVIGATION =====
+function navigateTo(pageId) {
+  const permissions = PERMISSIONS[currentUser.role];
+  if (permissions && !permissions.pages.includes(pageId)) {
+    showToast(`❌ Access denied for ${currentUser.role}`, 'error');
+    return;
+  }
+  
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId);
+  if (target && !target.classList.contains('hidden-by-role')) {
+    target.classList.add('active');
+  }
+  
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const activeLink = document.querySelector(`.nav-links a[data-page="${pageId}"]`);
+  if (activeLink) activeLink.classList.add('active');
+  
+  document.getElementById('navLinks').classList.remove('open');
+  
+  // Init charts
+  if (pageId === 'admin') setTimeout(initAdminCharts, 100);
+  if (pageId === 'accountant') setTimeout(initAccountantCharts, 100);
+}
+
+function toggleMobile() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+function toggleNotifications() {
+  document.getElementById('notiDropdown').classList.toggle('open');
+}
+
+function markAllRead() {
+  document.querySelectorAll('.notification-item.unread').forEach(item => item.classList.remove('unread'));
+  const badge = document.getElementById('notiCount');
+  if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+}
+
+document.addEventListener('click', function(e) {
+  const bell = document.querySelector('.notification-bell');
+  if (bell && !bell.contains(e.target)) {
+    document.getElementById('notiDropdown')?.classList.remove('open');
+  }
+});
+
+// ===== THEME =====
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+  document.getElementById('themeLabel').textContent = document.body.classList.contains('dark-mode') ? 'Light' : 'Dark';
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+}
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark-mode');
+  const label = document.getElementById('themeLabel');
+  if (label) label.textContent = 'Light';
+}
+
+// ===== CHANGE PASSWORD (Voluntary) =====
+function openChangePasswordModal() {
+  document.getElementById('changePasswordModal').classList.add('open');
+}
+
+function submitPasswordChange() {
+  const current = document.getElementById('currentPassword').value;
+  const newPwd = document.getElementById('newPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+  
+  if (!current || !newPwd || !confirm) return showToast('Fill all fields', 'error');
+  if (newPwd !== confirm) return showToast('Passwords do not match', 'error');
+  if (newPwd.length < 8) return showToast('Password too short', 'error');
+  
+  const demo = USERS[currentUser.role];
+  if (current !== demo.password) return showToast('Current password incorrect', 'error');
+  
+  demo.password = newPwd;
+  showToast('✅ Password changed!', 'success');
+  closeModal('changePasswordModal');
+  
+  document.getElementById('currentPassword').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('confirmPassword').value = '';
+}
+
+// ===== LOGOUT =====
+function logout() {
+  if (confirm('Logout?')) {
+    localStorage.removeItem('currentUser');
+    document.getElementById('loginPage').classList.remove('hidden');
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    currentUser = { role: null, username: null, fullName: null };
+    showToast('Logged out!', 'success');
+  }
+}
+
+// ===== UPLOAD LOGO =====
+function uploadSchoolLogo(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = e.target.result;
+    localStorage.setItem('schoolLogo', data);
+    document.getElementById('schoolLogoImage').src = data;
+    document.getElementById('schoolLogoImage').style.display = 'block';
+    document.getElementById('schoolLogoPlaceholder').style.display = 'none';
+    showToast('Logo updated!', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== CHARTS =====
+function initAdminCharts() {
+  const ctx1 = document.getElementById('adminUsersChart')?.getContext('2d');
+  if (ctx1 && !ctx1._chart) {
+    ctx1._chart = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Students', 'Teachers', 'Parents', 'Admins'],
+        datasets: [{ data: [143, 24, 143, 5], backgroundColor: ['#c49a2a', '#6f42c1', '#17a2b8', '#dc3545'], borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+  
+  const ctx2 = document.getElementById('adminMonthlyChart')?.getContext('2d');
+  if (ctx2 && !ctx2._chart) {
+    ctx2._chart = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [
+          { label: 'New Students', data: [12, 15, 8, 20, 18, 22, 25], borderColor: '#c49a2a', backgroundColor: 'rgba(196, 154, 42, 0.1)', tension: 0.3, fill: true },
+          { label: 'Fees (x100K)', data: [32, 35, 38, 40, 42, 41, 42.5], borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)', tension: 0.3, fill: true }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+function initAccountantCharts() {
+  const ctx1 = document.getElementById('acctPieChart')?.getContext('2d');
+  if (ctx1 && !ctx1._chart) {
+    ctx1._chart = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Fees', 'Sales', 'Other'],
+        datasets: [{ data: [4250000, 18000000, 250000], backgroundColor: ['#2ecc71', '#17a2b8', '#f39c12'], borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+  
+  const ctx2 = document.getElementById('acctLineChart')?.getContext('2d');
+  if (ctx2 && !ctx2._chart) {
+    ctx2._chart = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [
+          { label: 'Income', data: [15, 17, 16.5, 18.5, 20, 21.5, 22.5], borderColor: '#2ecc71', backgroundColor: 'rgba(46,204,113,0.1)', tension: 0.3, fill: true },
+          { label: 'Expenses', data: [1.2, 1.35, 1.5, 1.65, 1.75, 1.8, 1.85], borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)', tension: 0.3, fill: true }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function() {
+  // Load saved logo
+  const logo = localStorage.getItem('schoolLogo');
+  if (logo) {
+    const el = document.getElementById('schoolLogoImage');
+    if (el) { el.src = logo; el.style.display = 'block'; document.getElementById('schoolLogoPlaceholder').style.display = 'none'; }
+    const loginLogo = document.getElementById('loginPageLogo');
+    if (loginLogo) loginLogo.innerHTML = `<img src="${logo}" alt="Logo">`;
+  }
+  
+  // Load saved school name and motto
+  const name = localStorage.getItem('schoolName') || 'B.A.D SCHOOL';
+  const motto = localStorage.getItem('schoolMotto') || 'Building Academic Dreams';
+  
+  const nameEl = document.getElementById('loginPageSchoolName');
+  if (nameEl) nameEl.textContent = name;
+  const mottoEl = document.getElementById('loginPageMotto');
+  if (mottoEl) mottoEl.textContent = `"${motto}"`;
+  
+  // Remember username
+  const remembered = localStorage.getItem('rememberedUser');
+  if (remembered) {
+    document.getElementById('loginUsername').value = remembered;
+    document.getElementById('rememberMe').checked = true;
+  }
+  
+  // Shake animation
+  const shakeStyle = document.createElement('style');
+  shakeStyle.textContent = `@keyframes shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-5px)} 20%,40%,60%,80%{transform:translateX(5px)} }`;
+  document.head.appendChild(shakeStyle);
+});
+
+// EXPOSE
+window.selectRole = selectRole;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.clearInput = clearInput;
+window.handleLoginSubmit = handleLoginSubmit;
+window.fillDemo = fillDemo;
+window.switchLoginTab = switchLoginTab;
+window.showForgotPassword = showForgotPassword;
+window.socialLogin = socialLogin;
+window.toggleLoginTheme = toggleLoginTheme;
+window.toggleLanguage = toggleLanguage;
+window.showHelp = showHelp;
+window.closeModal = closeModal;
+window.submitForcePasswordChange = submitForcePasswordChange;
+window.navigateTo = navigateTo;
+window.toggleMobile = toggleMobile;
+window.toggleNotifications = toggleNotifications;
+window.markAllRead = markAllRead;
+window.toggleTheme = toggleTheme;
+window.openChangePasswordModal = openChangePasswordModal;
+window.submitPasswordChange = submitPasswordChange;
+window.logout = logout;
+window.uploadSchoolLogo = uploadSchoolLogo;
+window.showToast = showToast;
+window.closeToast = closeToast;
+</script>
+</body>
+</html>
